@@ -1,0 +1,5 @@
+sinc function can reconstruct continuous signal by summing sinc functions with amlplitude value equal to the sampled amplitude
+
+When transmitting signal it suppresses amplitude (gain) and introduces noise, when receiving signal we increase gain to compensate but this increases the gain of the noise so it becomes bigger proportion of signal
+
+With digital signals can use thresholding since we know we want 2 levels corresponding to 0,1, 
