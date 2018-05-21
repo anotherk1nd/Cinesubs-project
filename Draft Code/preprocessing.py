@@ -1,6 +1,6 @@
-#import pysrt as srt
-#import scipy as sp
-#from datetime import datetime, date
+import pysrt as srt
+import scipy as sp
+from datetime import datetime, date
 
 class preprocessing:
     '''
@@ -17,10 +17,9 @@ class preprocessing:
         self.subsfn = subsfn
         self.pb_array = [[],[]]
         self.subs_times = []
-        self.count = 0
-        self.counter = 0
+        #self.count = 0 count is a locally used variable within the pb_array_init function and hence need not be initialised
+        self.counter = 0 # counter is implemented by pb_array_fill when applying the tconv function and so needs to be initialised as it is shared between functions
         self.subs = 0
-        self.shit = 0
         self.times = []
 
     def open_subs(self):
@@ -60,22 +59,22 @@ class preprocessing:
         j = 0  # i is counter over subs array, j is counter over sample array (stored in pb_array)
         while True:
             if i + 1 > len(self.pb_array) - 1:  # matrices are indexed from 0 but the length returns the 'normal' length i.e len([1]) returns 1 not 0
-                print('substimes length exceeded')
+                print('pb_array length exceeded')
                 print(i)
                 break
             if j > len(self.subs) - 1:
-                print('pb array length exceeded')
+                print('substimes array length exceeded')
                 print(j)
                 break
             self.tconv(j)  # substimes are stored in self.times within this class function
-            print(self.times)
+            #print(self.times)
             # print(subs_times)
             # print(pb_array[i,1])
             # print(pb_array[i + 1, 1])
             # end = subs[j].end.to_time()
             #print(self.)
             if self.pb_array[i, 1] >= self.times[0]:
-                if self.pb_array[i + 1, 1] < self.times[1]:  # we only stored start times in pb_array, so need to compare to i+1
+                if self.pb_array[i + 1, 1] < self.times[1]:  # we only stored window start times in pb_array, so need to compare to i+1
                     print('Within subs window')
                     self.pb_array[i, 2] = 1
                     #print(self.pb_array[i,2])
@@ -88,12 +87,16 @@ class preprocessing:
                 #print(i)
                 i = i + 1
 
-#sp.set_printoptions(threshold=sp.nan)
-#subs = preprocessing('gotS07E01.srt')
-#subs.open_subs()
+    def save_pb_array(self):
+        sp.savetxt('pb_array',self.pb_array)
+
+sp.set_printoptions(threshold=sp.nan)
+subs = preprocessing('gotS07E01.srt')
+subs.open_subs()
 #subs.tconv(-1)
 
 #print(subs.times[1])
-#subs.pb_array_init()
-#subs.pb_array_fill()
-#print(subs.pb_array)
+subs.pb_array_init()
+subs.pb_array_fill()
+print(subs.pb_array)
+subs.save_pb_array()

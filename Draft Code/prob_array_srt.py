@@ -6,6 +6,11 @@ subs = srt.open('gotS07E01.srt') #THIS SUBSTRACK IS LONGER THAN THE FILM, SOME A
 #print(sp.shape(subs))#758 entries, 1 column I think
 #print(type(subs[1])) # <class 'pysrt.srtitem.SubRipItem'>
 #print(subs[0]) # subtitle index (from 1), start->stop time, text
+#print(subs[1].start.to_time())
+for i in range(len(subs)):
+    print(i)
+    print(subs[i].start.to_time())
+    print(subs[i].end.to_time())
 '''
 1
 00:00:03,202 --> 00:00:08,327
