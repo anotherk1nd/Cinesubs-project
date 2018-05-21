@@ -64,7 +64,7 @@ i=0
 j=0 # i is counter over subs array, j is counter over sample array (stored in pb_array)
 while True:
     if i +1 > len(pb_array)-1: #matrices are indexed from 0 but the length returns the 'normal' length i.e len([1]) returns 1 not 0
-        print('substimes length exceeded')
+        print('substimes length exceeded') # NEED TO CHECK THIS IS CORRECT ERROR MESSAGE, DOESNT LOOK LIKE IT
         print(i)
         break
     if j > len(subs)-1:
