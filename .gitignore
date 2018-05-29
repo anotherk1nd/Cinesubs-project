@@ -9,4 +9,8 @@
 *idea*
 *.xml
 *.idea*
-
+*.aux
+*.bbl
+*.bcf
+*.out
+*.DS_Store

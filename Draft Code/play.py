@@ -9,7 +9,8 @@ from sklearn.model_selection import train_test_split
 from sklearn.neural_network import MLPClassifier
 plt.close('all')
 
-data,rate = sf.read('gotS07E01.wav',)
+data,rate = sf.read('gotS07E01.wav')
+print(data,rate)
 # with open('pb_array.csv') as csvfile:
 #     readCSV = csv.reader(csvfile, delimiter=',')
 #     index = []
@@ -25,12 +26,12 @@ data,rate = sf.read('gotS07E01.wav',)
 
 #print(index,window_time,pb)
 
-#print(data[:,0]) #First channel
+#print(data[:,0]) #First channel^
 #print(rate)
 #print(sp.shape(data)) #(540672,6) I think this is the number of samples (48000*11secs = 528000, so must be slightly longer than 11s)and 6 channels
 #print(help(mfcc))
-features = mfcc(data[1,0],samplerate=48000,nfft=1200) #A numpy array of size (NUMFRAMES by numcep) containing features. Each row holds 1 feature vector. #NFFT size should be equal or greater to frame lengthhttps://github.com/jameslyons/python_speech_features/issues/33
-print(features)
+#features = mfcc(data[1,0],samplerate=48000,nfft=1200) #A numpy array of size (NUMFRAMES by numcep) containing features. Each row holds 1 feature vector. #NFFT size should be equal or greater to frame lengthhttps://github.com/jameslyons/python_speech_features/issues/33
+#print(features)
 #print(sp.shape(features)) #(1125,13) ie ~11s/0.01s windows, 13 columns for different cepstrums: numcep – the number of cepstrum to return, default 13, from http://python-speech-features.readthedocs.io/en/latest/
 #print(features[1124])
 #index = sp.arange(len(features))
