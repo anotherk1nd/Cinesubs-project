@@ -98,5 +98,10 @@ subs.open_subs()
 #print(subs.times[1])
 subs.pb_array_init()
 subs.pb_array_fill()
-print(subs.pb_array)
-subs.save_pb_array()
+#print(subs.pb_array)
+
+#We can then pass the object to a variable if we liked
+# pb_array = subs.pb_array
+# print(pb_array)
+# print(pb_array == subs.pb_array)
+#subs.save_pb_array()
