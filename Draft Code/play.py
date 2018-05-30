@@ -3,14 +3,35 @@ import wave #This can only handle 2 channels and is less complete that soundfile
 import soundfile as sf
 import csv
 import scipy as sp
+import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns; sns.set()# set decides the aesthetic parameters. Don't know if i need this.
 from sklearn.model_selection import train_test_split
 from sklearn.neural_network import MLPClassifier
+#from preprocessing import preprocessing
 plt.close('all')
+import librosa as lsa # we need to have ffmpeg installed on the lappytop to work, not within python
+import scipy as sp
+#sp.set_printoptions(threshold=sp.nan)
+from pydub.utils import mediainfo
 
-data,rate = sf.read('gotS07E01.wav')
-print(data,rate)
+# data,rate = sf.read('gotS07E01.wav')
+# print(data,rate)
+#audionat = lsa.core.load('outputaudio.mp3',sr=None)
+info = mediainfo("outputaudio.mp3")
+sr = info['sample_rate']
+sr = int(sr)
+print(type(sr))
+audio,sr = lsa.core.load('outputaudio.mp3',sr) #sr=None preserves the native sample rate, ITS SUPPOSED TO BUT PRODUCES DIFF RESULTS, CHECK NOTES DOC
+#print(sp.array_equal(audionat,audio)) #apparently the 2 are different, even though with sr=none should detect the sample rate and use accordinglz
+print(sp.shape(audio))
+print(type(audio))
+print(sr)
+np.savetxt("/Users/joshfenech/Documents/Linux Documents Backup May/Documents/Shared Documents/MLDM/Project/Draft Code/mp3_array.csv",audio,delimiter=',',fmt="%d")
+
+# subs = preprocessing('gotS07E01.srt')
+#subs.open_subs()
+
 # with open('pb_array.csv') as csvfile:
 #     readCSV = csv.reader(csvfile, delimiter=',')
 #     index = []
@@ -30,7 +51,7 @@ print(data,rate)
 #print(rate)
 #print(sp.shape(data)) #(540672,6) I think this is the number of samples (48000*11secs = 528000, so must be slightly longer than 11s)and 6 channels
 #print(help(mfcc))
-#features = mfcc(data[1,0],samplerate=48000,nfft=1200) #A numpy array of size (NUMFRAMES by numcep) containing features. Each row holds 1 feature vector. #NFFT size should be equal or greater to frame lengthhttps://github.com/jameslyons/python_speech_features/issues/33
+#features = mfcc(data[1,0],samplerate=48000,nfft=1200) #A numpy array of size (NUMFRAMES by numcep) containing features. Each row holds 1 feature vector. #NFFT size should be equal or greater to frame lengthhttps://github.com/jameslyons/python_speech_features/issues3
 #print(features)
 #print(sp.shape(features)) #(1125,13) ie ~11s/0.01s windows, 13 columns for different cepstrums: numcep – the number of cepstrum to return, default 13, from http://python-speech-features.readthedocs.io/en/latest/
 #print(features[1124])

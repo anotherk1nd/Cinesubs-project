@@ -46,6 +46,7 @@ class preprocessing:
     #def myfunction(self,subfn):
 
     def pb_array_init(self):
+        # initialise the probability array to the correct length
         self.tconv(-1) # This assigns the times of the last sub to self.times
         last_sub = self.times[1]
         #print(last_sub)
