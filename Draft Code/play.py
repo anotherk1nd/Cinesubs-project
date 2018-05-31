@@ -12,22 +12,49 @@ from sklearn.neural_network import MLPClassifier
 plt.close('all')
 import librosa as lsa # we need to have ffmpeg installed on the lappytop to work, not within python
 import scipy as sp
-#sp.set_printoptions(threshold=sp.nan)
+sp.set_printoptions(threshold=sp.nan)
 from pydub.utils import mediainfo
+from pydub import AudioSegment
+import pandas as pd
+
 
 # data,rate = sf.read('gotS07E01.wav')
 # print(data,rate)
 #audionat = lsa.core.load('outputaudio.mp3',sr=None)
-info = mediainfo("outputaudio.mp3")
-sr = info['sample_rate']
-sr = int(sr)
-print(type(sr))
-audio,sr = lsa.core.load('outputaudio.mp3',sr) #sr=None preserves the native sample rate, ITS SUPPOSED TO BUT PRODUCES DIFF RESULTS, CHECK NOTES DOC
+
+#Convert wav to mp3
+#AudioSegment.from_wav('gotS07E01.wav').export('gotS07E01.mp3',format="mp3")
+
+#info = mediainfo('gotS07E01_16k.mp3')
+#sr = info['sample_rate']
+#sr = int(sr)
+#print(type(sr))
+#audio,sr = lsa.load('gotS07E01_16k.mp3', sr=16000, duration=5) #sr=None preserves the native sample rate, ITS SUPPOSED TO BUT PRODUCES DIFF RESULTS, CHECK NOTES DOC
+#print(audio,sr)
+#print(sp.shape(audio))
+
+#array = [audio]
+#df = pd.DataFrame(array)
+#print(df)
+#df.to_csv("got_16k.csv",sep=",")
+
+df = pd.read_csv('got_16k.csv')
+print(df)
+print(df.iloc[0,80000]) #indexed from 1 with iloc, column 0 has just 0 placeholder, this is a ROW vector (well matrix with dimension 1 in terms of number of rows.
+features = mfcc(df.iloc[0,:],samplerate=16000,nfft=1200) #A numpy array of size (NUMFRAMES by numcep) containing features. Each row holds 1 feature
+print(features)
+#with pd.option_context('display.max_rows', None, 'display.max_columns', 3):
+#     print(df)
+#print(df.iloc[[1,1]])
 #print(sp.array_equal(audionat,audio)) #apparently the 2 are different, even though with sr=none should detect the sample rate and use accordinglz
-print(sp.shape(audio))
-print(type(audio))
-print(sr)
-np.savetxt("/Users/joshfenech/Documents/Linux Documents Backup May/Documents/Shared Documents/MLDM/Project/Draft Code/mp3_array.csv",audio,delimiter=',',fmt="%d")
+#print(sp.shape(audio))
+#print(type(audio))
+#print(sr)
+#np.savetxt("/Users/joshfenech/Documents/Linux Documents Backup May/Documents/Shared Documents/MLDM/Project/Draft Code/mp3_array.csv",audio,delimiter=',',fmt="%d")
+# with open('mp3_array.csv') as csvDataFile:
+#     csvReader = csv.reader(csvDataFile)
+
+#
 
 # subs = preprocessing('gotS07E01.srt')
 #subs.open_subs()
