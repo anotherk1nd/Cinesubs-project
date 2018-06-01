@@ -13,8 +13,8 @@ class audio:
 
 
     def mfcc(self):
-        self.mfccs = mfcc(df['data'],samplerate=sr,nfft=512)
+        self.mfccs = mfcc(self.df['data'],samplerate=self.sr,nfft=512)
 
 fun = audio('gotS07E01_16k.mp3',16000,5)
-
-print(fun.audio,fun.sr,fun.df)
+fun.mfcc()
+print(fun.mfccs)
