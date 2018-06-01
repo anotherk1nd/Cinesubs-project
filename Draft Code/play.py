@@ -16,7 +16,9 @@ sp.set_printoptions(threshold=sp.nan)
 from pydub.utils import mediainfo
 from pydub import AudioSegment
 import pandas as pd
-
+from pandas.util.testing import assert_frame_equal
+pd.set_option('display.max_columns', None)
+import time
 
 # data,rate = sf.read('gotS07E01.wav')
 # print(data,rate)
@@ -29,20 +31,47 @@ import pandas as pd
 #sr = info['sample_rate']
 #sr = int(sr)
 #print(type(sr))
-#audio,sr = lsa.load('gotS07E01_16k.mp3', sr=16000, duration=5) #sr=None preserves the native sample rate, ITS SUPPOSED TO BUT PRODUCES DIFF RESULTS, CHECK NOTES DOC
+audio,sr = lsa.load('gotS07E01_16k.mp3', sr=16000) #sr=None preserves the native sample rate, ITS SUPPOSED TO BUT PRODUCES DIFF RESULTS, CHECK NOTES DOC
+print(sp.shape(audio))
 #print(audio,sr)
 #print(sp.shape(audio))
-
+#print(audio)
+#print(audio[2000:2500])
 #array = [audio]
-#df = pd.DataFrame(array)
+#print(array[-1])
+df = pd.DataFrame({'data':audio})
 #print(df)
+#print(df.iloc[0,200:500])
+t0 = time.time()
+features = mfcc(df['data'],samplerate=16000,nfft=512) #nfft=512 for 16000, check notes for info on this.
+t1 = time.time()
+print(features) #for some reason we get a nan for first and final entry
+time = t1-t0
+print(time)
+#nan=sp.isnan(np.sum(features))
+#print(sp.where(features=="nan"))
+#nan_rows = df[df['data'].isnull()]
+
 #df.to_csv("got_16k.csv",sep=",")
 
-df = pd.read_csv('got_16k.csv')
-print(df)
-print(df.iloc[0,80000]) #indexed from 1 with iloc, column 0 has just 0 placeholder, this is a ROW vector (well matrix with dimension 1 in terms of number of rows.
-features = mfcc(df.iloc[0,:],samplerate=16000,nfft=1200) #A numpy array of size (NUMFRAMES by numcep) containing features. Each row holds 1 feature
-print(features)
+
+#shitty cunt of csv changed the shape of the dataframe, fuck that shit
+
+# df1 = pd.read_csv('got_16k.csv',header=None)
+# print(type(df))
+# print(type(df1))
+# df.drop(df.index[0], inplace=True)
+# print(type(df1))
+#
+# #print(df1)
+# assert_frame_equal(df,df1)
+# df += 1e-6
+# print(df)
+# print(df.iloc[0,-13]) #NaN placeholder
+#print(df.iloc[0,:])
+#print(df.iloc[0,80000]) #indexed from 1 with iloc, column 0 has just 0 placeholder, this is a ROW vector (well matrix with dimension 1 in terms of number of rows.
+#features = mfcc(df.iloc[0,1:],samplerate=16000,nfft=1200) #A numpy array of size (NUMFRAMES by numcep) containing features. Each row holds 1 feature
+#print(features)
 #with pd.option_context('display.max_rows', None, 'display.max_columns', 3):
 #     print(df)
 #print(df.iloc[[1,1]])
