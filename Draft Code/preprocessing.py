@@ -91,14 +91,14 @@ class preprocessing:
     def save_pb_array(self):
         sp.savetxt('pb_array',self.pb_array)
 
-sp.set_printoptions(threshold=sp.nan)
-subs = preprocessing('gotS07E01.srt')
-subs.open_subs()
+#sp.set_printoptions(threshold=sp.nan)
+#subs = preprocessing('gotS07E01.srt')
+#subs.open_subs()
 #subs.tconv(-1)
 
 #print(subs.times[1])
-subs.pb_array_init()
-subs.pb_array_fill()
+#subs.pb_array_init()
+#subs.pb_array_fill()
 #print(subs.pb_array)
 
 #We can then pass the object to a variable if we liked
