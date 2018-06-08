@@ -2,9 +2,9 @@ from preprocessing import *
 from mfcc_class_method import *
 
 class learner(preprocessing, audio):
-    def __init__(self,):
-        # We don't need to define the object variables of other classes here, only new ones I think
-         learner.
+    pass
+    # def __init__(self,subsfn,mp3,sr,duration):
+    #     learner.__init__(self,subsfn)
     #     learner.__init__(self, mp3,sr,duration)
 
 
