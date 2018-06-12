@@ -58,12 +58,17 @@ class audio:
         #self.mfccs = pd.read_csv(load_fn,header=None).values #much faster than sp.loadtxt!
         self.mfccs = sp.load(load_fn)
 
-fun = audio('gotS07E01_16k.mp3',sr=16000,duration=3587)
-time_load = timeit.timeit(fun.audio_load(sr=fun.sr),number=1,globals=globals()) # number of runs, using global variables (i think)
-fun.mfcc()
-fun.save
-
-print(timeload)
+#fun = audio('gotS07E01_16k.mp3',sr=16000,duration=3587)
+#time_audioload = timeit.timeit(lambda:fun.audio_load(sr=fun.sr),number=1,globals=globals())
+# number of runs, using global variables runs in the global environment and so actually assigns the variables during run time,
+# rather than running in a kind of sandbox environment (local) where no changes to the global environment are made.
+# Need a lambda function since it needs to time a function, but without the lambda we are really just passing an object of the class fun
+#fun.mfcc()
+#time_mfccsave = timeit.timeit(lambda:fun.save_mfcc("full_mfccs.npy"),number=1,globals=globals())
+#time_mfccload = timeit.timeit(lambda:fun.load_mfcc("full_mfccs.npy"),number=1,globals=globals())
+#print("Audio load time",time_audioload)
+#print("Save time",time_mfccsave)
+#print("MFCC load time",time_mfccload)
 
 #fun.mfcc()
 #a = fun.mfccs

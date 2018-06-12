@@ -1,6 +1,7 @@
 import pysrt as srt
 import scipy as sp
 from datetime import datetime, date
+import pandas as pd
 
 class preprocessing:
     '''
@@ -91,8 +92,11 @@ class preprocessing:
     def save_pb_array(self):
         sp.savetxt('pb_array',self.pb_array)
 
+    def load_pb_array(self,fn):
+        #self.pb_array = sp.loadtxt(fn)
+        self.pb_array = pd.read_csv(fn, header=None).values  # much faster than sp.loadtxt!
 #sp.set_printoptions(threshold=sp.nan)
-#subs = preprocessing('gotS07E01.srt')
+subs = preprocessing('gotS07E01.srt')
 #subs.open_subs()
 #subs.tconv(-1)
 
@@ -106,3 +110,5 @@ class preprocessing:
 # print(pb_array)
 # print(pb_array == subs.pb_array)
 #subs.save_pb_array()
+#subs.load_pb_array("pb_array.csv")
+#print(subs.pb_array)
