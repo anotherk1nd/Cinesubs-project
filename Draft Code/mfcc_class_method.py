@@ -11,21 +11,30 @@ class audio:
 
     def __init__(self,mp3,sr,duration):
         self.duration = duration
-        t0 = time.time()
-        self.audio, self.sr = lsa.load(mp3, sr=sr,duration=self.duration)
-        t00 = time.time()
-        self.time0 = t00 - t0
-        self.df = pd.DataFrame({'data': self.audio})
+        #t0 = time.time()
+        #self.audio, self.sr = lsa.load(mp3, sr=sr,duration=self.duration)
+        #t00 = time.time()
+        #self.time0 = t00 - t0
+        #self.df = pd.DataFrame({'data': self.audio})
+        self.mp3 = mp3
+        self.sr = sr
         self.mfccs = []
-        self.time = 0.0
+        #self.time = 0.0
         #self.mfcc_fn = ""
+
+    def audio_load(self,sr):
+        load_t0 = time.time()
+        self.audio,self.sr = lsa.load(self.mp3, sr=sr,duration=self.duration)
+        load_t1 = time.time()
+        self.df = pd.DataFrame({'data': self.audio})
+        self.audio_load_time = load_t1 - load_t0
 
     def mfcc(self):
         try:
             t1 = time.time()
             self.mfccs = mfcc(self.df['data'],samplerate=self.sr,nfft=512)
             t2 = time.time()
-            self.time = t2 - t1
+            self.mfcc_time = t2 - t1
 
             if np.isnan(np.sum(self.mfccs)): #This returns boolean value describing whether nan is present
                 raise ValueError
@@ -40,25 +49,34 @@ class audio:
             else:
                 print("Process terminated")
 
-    def save_mfcc(self):
-        sp.savetxt('mfcc.csv',self.mfccs, delimiter=',')
+    def save_mfcc(self,save_fn):
+        #sp.savetxt(fn,self.mfccs, delimiter=',')
+        sp.save(save_fn,self.mfccs) #saves in binary format with extension npy
 
-    def load_mfcc(self,mfcc_fn):
-        self.mfccs = sp.loadtxt(mfcc_fn,delimiter=',')
+    def load_mfcc(self,load_fn):
+        #self.mfccs = sp.loadtxt(load_fn,delimiter=',')
+        #self.mfccs = pd.read_csv(load_fn,header=None).values #much faster than sp.loadtxt!
+        self.mfccs = sp.load(load_fn)
 
+fun = audio('gotS07E01_16k.mp3',sr=16000,duration=3587)
+time_load = timeit.timeit(fun.audio_load(sr=fun.sr),number=1,globals=globals()) # number of runs, using global variables (i think)
+fun.mfcc()
+fun.save
 
-fun = audio('gotS07E01_16k.mp3',16000,3587)
+print(timeload)
+
 #fun.mfcc()
 #a = fun.mfccs
 #print(a)
 #fun.save_mfcc()
 #print(fun.time0,fun.time)
-time1 = time.time()
-fun.load_mfcc('mfcc.csv')
-time11 = time.time()
+#time1 = time.time()
+#fun.load_mfcc('mfcc.csv')
+#time11 = time.time()
+#print(fun.mfccs)
 #print("load mp3 time", fun.time0)
 #print("mfcc time", fun.time)
-print("load mfcc time",time11-time1)
+#print("load mfcc time",time11-time1)
 #b = fun.mfccs
 #print(sp.array_equal(a,b)) #returns true
 # print(a)
