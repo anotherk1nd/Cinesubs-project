@@ -89,14 +89,17 @@ class preprocessing:
                 #print(i)
                 i = i + 1
 
-    def save_pb_array(self):
-        sp.savetxt('pb_array',self.pb_array)
+    def save_pb_array(self,fn):
+        #sp.savetxt('pb_array',self.pb_array)
+        sp.save(fn,self.pb_array)
 
     def load_pb_array(self,fn):
         #self.pb_array = sp.loadtxt(fn)
-        self.pb_array = pd.read_csv(fn, header=None).values  # much faster than sp.loadtxt!
+        #self.pb_array = pd.read_csv(fn, header=None).values  # much faster than sp.loadtxt!
+        self.pb_array=sp.load(fn) #Must be .npy!
+
 #sp.set_printoptions(threshold=sp.nan)
-subs = preprocessing('gotS07E01.srt')
+#subs = preprocessing('gotS07E01.srt')
 #subs.open_subs()
 #subs.tconv(-1)
 
