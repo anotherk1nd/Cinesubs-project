@@ -99,19 +99,19 @@ class preprocessing:
         self.pb_array=sp.load(fn) #Must be .npy!
 
 #sp.set_printoptions(threshold=sp.nan)
-#subs = preprocessing('gotS07E01.srt')
-#subs.open_subs()
-#subs.tconv(-1)
-
-#print(subs.times[1])
-#subs.pb_array_init()
-#subs.pb_array_fill()
-#print(subs.pb_array)
-
-#We can then pass the object to a variable if we liked
-# pb_array = subs.pb_array
-# print(pb_array)
-# print(pb_array == subs.pb_array)
-#subs.save_pb_array()
-#subs.load_pb_array("pb_array.csv")
-#print(subs.pb_array)
+# subs = preprocessing('gotS07E01.srt')
+# subs.open_subs()
+# #subs.tconv(-1)
+#
+# #print(subs.times[1])
+# subs.pb_array_init()
+# subs.pb_array_fill()
+# print(subs.pb_array)
+#
+# #We can then pass the object to a variable if we liked
+# # pb_array = subs.pb_array
+# # print(pb_array)
+# # print(pb_array == subs.pb_array)
+# subs.save_pb_array("pb_array.npy")
+# subs.load_pb_array("pb_array.npy")
+# print(subs.pb_array)

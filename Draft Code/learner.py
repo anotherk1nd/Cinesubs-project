@@ -26,7 +26,7 @@ class learner(preprocessing, audio):
 fun2 = learner('gotS07E01.srt','gotS07E01_16k.mp3',sr=16000,duration=3587)
 fun2.load_mfcc("full_mfccs.npy")
 print(fun2.mfccs)
-fun2.load_pb_array("pb_array.csv")
+fun2.load_pb_array("pb_array.npy")
 print(fun2.pb_array)
 
 
