@@ -13,9 +13,25 @@ from sklearn.model_selection import train_test_split
 
 class learner(preprocessing, audio):
     #pass
-    def __init__(self,subsfn,mp3,sr,duration):
+    def __init__(self,subsfn,mp3,sr,duration=None):
         preprocessing.__init__(self,subsfn)
         audio.__init__(self,mp3,sr,duration)
+
+
+    def len_check(self):
+        # self.tconv(-1)
+        # self.duration_sub = self.times[1] #gives time when last sub disappears off screen
+        # self.duration_audio = lsa.get_duration(self.audio,sr=self.sr) #must have loaded mp3 first
+        # if self.duration_sub > self.duration_audio:
+        if len(self.mfccs) > len(self.pb_array):
+            print("mfcc array longer than pb array")
+            self.mfccs = self.mfccs[:len(self.pb_array),:]
+        elif len(self.mfccs) < len(self.pb_array):
+            print("pb_array longer than mfcc array")
+            self.pb_array = self.pb_array[:len(self.mfccs),:]
+        else:
+            print("array lengths match")
+
 
     def train_test_splitting(self,test_size=0.33):
         X = self.mfccs
@@ -34,14 +50,20 @@ class learner(preprocessing, audio):
 # subs.load_pb_array("pb_array.csv")
 
 fun2 = learner('gotS07E01.srt','gotS07E01_16k.mp3',sr=16000,duration=None) #using duration=None should give full file. Pb array is filled based on last sub
-fun2.audio_load(sr=fun2.sr)
-fun2.mfcc()
-fun2.save_mfcc("full_mfccs.npy")
-#fun2.load_mfcc("full_mfccs.npy")
+#fun2.open_subs()
+#fun2.audio_load()
+#print(fun2.duration_true)
+#fun2.audio_load(sr=fun2.sr)
+#fun2.mfcc()
+#fun2.save_mfcc("full_mfccs.npy")
+fun2.load_mfcc("full_mfccs.npy")
 fun2.load_pb_array("pb_array.npy")
-print(fun2.mfccs)
+fun2.len_check()
+
+#print(len(fun2.mfccs),len(fun2.pb_array))
+#print(fun2.mfccs)
 #fun2.load_pb_array("pb_array.npy")
-print(sp.shape(fun2.mfccs),sp.shape(fun2.pb_array))
+#print(sp.shape(fun2.mfccs),sp.shape(fun2.pb_array))
 #fun2.train_test_splitting()
 
 

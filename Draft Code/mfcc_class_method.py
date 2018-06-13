@@ -22,10 +22,11 @@ class audio:
         #self.time = 0.0
         #self.mfcc_fn = ""
 
-    def audio_load(self,sr):
+    def audio_load(self):
         load_t0 = time.time()
-        self.audio,self.sr = lsa.load(self.mp3, sr=sr,duration=self.duration)
+        self.audio,self.sr = lsa.load(self.mp3, sr=self.sr,duration=self.duration)
         load_t1 = time.time()
+        self.duration = lsa.get_duration(self.audio,sr=self.sr)
         self.df = pd.DataFrame({'data': self.audio})
         self.audio_load_time = load_t1 - load_t0
 
