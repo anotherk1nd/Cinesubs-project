@@ -2,6 +2,8 @@ import pysrt as srt
 import scipy as sp
 from datetime import datetime, date
 import pandas as pd
+import math as m
+import timeit
 
 class preprocessing:
     '''
@@ -49,10 +51,13 @@ class preprocessing:
     def pb_array_init(self):
         # initialise the probability array to the correct length
         self.tconv(-1) # This assigns the times of the last sub to self.times
-        last_sub = self.times[1]
+        last_sub = self.times[1] #This gives time that last sub is removed from screen
         #print(last_sub)
-        self.pb_array = sp.zeros((int(last_sub), 3))
-        count = sp.arange(int(last_sub))
+        #print(m.ceil(last_sub))
+        len = m.ceil(last_sub)
+        #print(type(len))
+        self.pb_array = sp.zeros((len*100,3))
+        count = sp.arange(len*100)
         self.pb_array[:, 0] = count[:]  # an index for each sample starting at 0
         self.pb_array[:, 1] = self.pb_array[:,0] * 0.01  # 0.01 is the size of the MFCC windows used in play.py, this is the starting point for each window
 
@@ -99,19 +104,22 @@ class preprocessing:
         self.pb_array=sp.load(fn) #Must be .npy!
 
 #sp.set_printoptions(threshold=sp.nan)
-# subs = preprocessing('gotS07E01.srt')
-# subs.open_subs()
+#subs = preprocessing('gotS07E01.srt')
+#subs.open_subs()
 # #subs.tconv(-1)
 #
 # #print(subs.times[1])
-# subs.pb_array_init()
-# subs.pb_array_fill()
-# print(subs.pb_array)
-#
+#subs.pb_array_init()
+#subs.pb_array_fill()
+#print(subs.pb_array)
+#time_pbfill = timeit.timeit(lambda:subs.pb_array_fill(),number=1,globals=globals())
+#print(time_pbfill)
+#print(subs.pb_array)
+
 # #We can then pass the object to a variable if we liked
 # # pb_array = subs.pb_array
 # # print(pb_array)
 # # print(pb_array == subs.pb_array)
-# subs.save_pb_array("pb_array.npy")
+#subs.save_pb_array("pb_array.npy")
 # subs.load_pb_array("pb_array.npy")
 # print(subs.pb_array)
