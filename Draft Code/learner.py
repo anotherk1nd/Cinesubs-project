@@ -6,10 +6,14 @@ import scipy as sp
 import numpy as np
 sp.random.seed(4321) #For reproducibility
 np.random.seed(4321) #For reproducibility
-from keras.models import Sequential
-from keras.layers import Dense, Dropout, Activation, Flatten, Convolution2D, MaxPooling2D
+from keras.layers import Dense, Input, LSTM, Conv1D, Conv2D, Dropout, Flatten, Activation, MaxPooling2D
+from keras.models import Model, model_from_json
+from keras.layers.normalization import BatchNormalization
+from keras.callbacks import EarlyStopping, ModelCheckpoint
+from keras.optimizers import Adam, RMSprop
 from keras.utils import np_utils
 from sklearn.model_selection import train_test_split
+import time
 
 class learner(preprocessing, audio):
     #pass
@@ -35,12 +39,46 @@ class learner(preprocessing, audio):
 
     def train_test_splitting(self,test_size=0.33):
         X = self.mfccs
-        y = self.pb_array
+        y = self.pb_array[:,2]
         self.test_size = test_size
         self.X_train, self.X_test, self.y_train, self.y_test = train_test_split(X, y, test_size = self.test_size, random_state = 42)
-        print(X_train.shape)
+        print(self.X_train.shape)
 
-    #def build_net(self):
+    # Conv-1D architecture. Just one sample as input
+    def model_dense(self,input_shape):
+
+        inp = Input(shape=input_shape)
+        model = inp
+
+        model = Conv1D(filters=12, kernel_size=(3), activation='relu')(model)
+        model = Conv1D(filters=12, kernel_size=(3), activation='relu')(model)
+        model = Flatten()(model)
+
+        model = Dense(56)(model)
+        model = Activation('relu')(model)
+        model = BatchNormalization()(model)
+        model = Dropout(0.2)(model)
+        model = Dense(28)(model)
+        model = Activation('relu')(model)
+        model = BatchNormalization()(model)
+
+        model = Dense(1)(model)
+        model = Activation('sigmoid')(model)
+
+        model = Model(inp, model)
+        #fun2.model = model
+        self.model = model
+
+    def save_model(self,mfn):
+        # serialize model to JSON
+        model_json = self.model.to_json()
+        with open(mfn, "w") as json_file:
+            json_file.write(model_json)
+
+    def save_weights(self,wfn):
+        # serialize weights to HDF5
+        model.save_weights(wfn)
+        print("Saved model to disk")
 
 # fun = audio('gotS07E01_16k.mp3',sr=16000,duration=3587)
 # fun.load_mfcc("full_mfccs.npy")
@@ -57,14 +95,50 @@ fun2 = learner('gotS07E01.srt','gotS07E01_16k.mp3',sr=16000,duration=None) #usin
 #fun2.mfcc()
 #fun2.save_mfcc("full_mfccs.npy")
 fun2.load_mfcc("full_mfccs.npy")
+print(fun2.mfccs)
+
+
 fun2.load_pb_array("pb_array.npy")
 fun2.len_check()
+#fun2.train_test_splitting()
+
+# rand = np.random.permutation(np.arange(len(fun2.y_train)))
+# fun2.X_train = fun2.X_train[rand]
+# fun2.y_train = fun2.y_train[rand]
+#
+# fun2.X_train = np.array([np.rot90(val) for val in fun2.X_train])
+# fun2.X_train = fun2.X_train - np.mean(fun2.X_train, axis=0)
+# print(fun2.X_train.shape, len(fun2.y_train[fun2.y_train==0]), len(fun2.y_train[fun2.y_train==1]), float(len(fun2.y_train[fun2.y_train==0]))/len(fun2.y_train[fun2.y_train==1]))
+print(fun2.pb_array)
+print(sp.shape(fun2.pb_array))
+#print(fun2.pb_array[:,2])
+#print(sp.shape(fun2.pb_array[:,2]))
+print(sp.shape(fun2.mfccs))
+fun2.mfccs = np.expand_dims(fun2.mfccs, axis=2) # reshape (569, 30) to (569, 30, 1)
+print(sp.shape(fun2.mfccs))
+#mccs_stack = sp.stack()
+#input_shape = sp.shape(fun2.mfccs[1])
+input_shape = (13,1) #for some reason, (13,) doesnt work, I think 1 here means 1 sample. sabater uses this too. Although Im not sure if i must rotate data
+# print(input_shape)
+earlyStopping = EarlyStopping(monitor='val_loss', min_delta=0.00001, verbose=0, mode='min', patience=5)
+checkpoint = ModelCheckpoint(filepath="checkpoint",monitor='val_loss', verbose=0, save_best_only=True)
+callbacks_list = [earlyStopping, checkpoint]
+fun2.model_dense(input_shape)
+fun2.model.compile(loss='binary_crossentropy', optimizer=Adam(lr=0.001), metrics=['accuracy'])
+t0 = time.time()
+fun2.train_test_splitting(test_size=0.33)
+hist = fun2.model.fit(fun2.X_train, fun2.y_train, epochs=2000, batch_size=32, shuffle=True, validation_split=0.3, verbose=0, callbacks=callbacks_list)
+t1 =time.time()
+print('val_loss:', min(hist.history['val_loss']))
+print('val_acc:', max(hist.history['val_acc']))
+print("time: ",t1-t0)
+
 
 #print(len(fun2.mfccs),len(fun2.pb_array))
 #print(fun2.mfccs)
 #fun2.load_pb_array("pb_array.npy")
 #print(sp.shape(fun2.mfccs),sp.shape(fun2.pb_array))
-#fun2.train_test_splitting()
+
 
 
 
