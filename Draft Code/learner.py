@@ -9,11 +9,24 @@ np.random.seed(4321) #For reproducibility
 from keras.layers import Dense, Input, LSTM, Conv1D, Conv2D, Dropout, Flatten, Activation, MaxPooling2D
 from keras.models import Model, model_from_json
 from keras.layers.normalization import BatchNormalization
-from keras.callbacks import EarlyStopping, ModelCheckpoint
+from keras.callbacks import EarlyStopping, ModelCheckpoint, History
 from keras.optimizers import Adam, RMSprop
 from keras.utils import np_utils
 from sklearn.model_selection import train_test_split
 import time
+import matplotlib.pyplot as plt
+import pickle
+
+
+def save_obj(obj, name ):
+    # Saves to obj file I created in working directory
+    with open('obj/'+ name + '.pkl', 'wb') as f:
+        pickle.dump(obj, f, pickle.HIGHEST_PROTOCOL)
+
+def load_obj(name ):
+    # Loads from obj file I created in working directory
+    with open('obj/' + name + '.pkl', 'rb') as f:
+        return pickle.load(f)
 
 class learner(preprocessing, audio):
     #pass
@@ -120,18 +133,51 @@ print(sp.shape(fun2.mfccs))
 #input_shape = sp.shape(fun2.mfccs[1])
 input_shape = (13,1) #for some reason, (13,) doesnt work, I think 1 here means 1 sample. sabater uses this too. Although Im not sure if i must rotate data
 # print(input_shape)
-earlyStopping = EarlyStopping(monitor='val_loss', min_delta=0.00001, verbose=0, mode='min', patience=5)
-checkpoint = ModelCheckpoint(filepath="checkpoint",monitor='val_loss', verbose=0, save_best_only=True)
-callbacks_list = [earlyStopping, checkpoint]
+earlyStopping = EarlyStopping(monitor='val_loss', min_delta=0.00001, verbose=1, mode='min', patience=5)
+checkpoint = ModelCheckpoint(filepath="checkpoint",monitor='val_loss', verbose=1, save_best_only=True)
+history = History()
+callbacks_list = [earlyStopping, checkpoint, history] #A callback is a set of functions to be applied at given stages of the training procedure.
 fun2.model_dense(input_shape)
+
+
+#fun2.model.load_weights("checkpoint")
 fun2.model.compile(loss='binary_crossentropy', optimizer=Adam(lr=0.001), metrics=['accuracy'])
-t0 = time.time()
 fun2.train_test_splitting(test_size=0.33)
-hist = fun2.model.fit(fun2.X_train, fun2.y_train, epochs=2000, batch_size=32, shuffle=True, validation_split=0.3, verbose=0, callbacks=callbacks_list)
+epoch_num = 2000
+t0 = time.time()
+hist = fun2.model.fit(fun2.X_train, fun2.y_train, epochs=epoch_num, batch_size=32, shuffle=True, validation_split=0.3, verbose=0, callbacks=callbacks_list)
 t1 =time.time()
-print('val_loss:', min(hist.history['val_loss']))
-print('val_acc:', max(hist.history['val_acc']))
+fun2.model.save_weights("Model Weights")
+fun2.model.save("Model")
+print(hist.history)
+save_obj(hist.history,"hist")
+#print('val_loss:', min(hist.history['val_loss']))
+#print('val_acc:', max(hist.history['val_acc']))
+scores = fun2.model.evaluate(fun2.X_test,fun2.y_test)
+print(scores)
 print("time: ",t1-t0)
+prediction = fun2.model.predict(fun2.X_test)
+print(prediction)
+prediction_binary = sp.round_(prediction)
+print(prediction_binary)
+#print(np.where(prediction_binary!=fun2.y_test)) #Hangs on this for some reason
+sp.save("Prediction.npy",prediction)
+sp.save("Prediction Binary.npy",prediction_binary)
+# visualizing losses and accuracy
+train_loss = hist.history['loss']
+val_loss   = hist.history['val_loss']
+train_acc  = hist.history['acc']
+val_acc    = hist.history['val_acc']
+xc         = range(len(hist.history["val_loss"])) # number of epochs
+
+plt.figure()
+plt.plot(xc, train_loss, label="Training Loss")
+plt.plot(xc, val_loss, label="Validation Loss")
+plt.xlabel("Epoch")
+plt.ylabel("Log Loss")
+plt.title("Training and Validation Loss on 1D CNN, 1 Hour of Audio")
+#plt.savefig("train_val_loss.png")
+plt.show()
 
 
 #print(len(fun2.mfccs),len(fun2.pb_array))
